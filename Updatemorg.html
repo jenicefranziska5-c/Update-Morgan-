@@ -1,0 +1,123 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wisetransfer Bank</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-100 text-slate-900"><!-- LOGIN PAGE --><div id="loginPage" class="max-w-md mx-auto p-8 mt-20 bg-white shadow rounded-xl">
+  <h2 class="text-2xl font-bold mb-4 text-center">Wisetransfer Login</h2>
+  <input id="username" type="text" placeholder="Username" class="w-full border p-2 rounded mb-3">
+  <input id="password" type="password" placeholder="Password" class="w-full border p-2 rounded mb-3">
+  <button onclick="login()" class="w-full bg-blue-600 text-white py-2 rounded">Login</button>
+</div><!-- DASHBOARD --><div id="dashboard" class="hidden p-6">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold">Wisetransfer Bank</h1>
+    <div id="dateTime" class="text-sm"></div>
+  </div>
+  <h2 id="greeting" class="text-xl font-semibold mb-4"></h2>
+  <div class="bg-white shadow p-4 rounded-xl mb-6">
+    <p class="text-lg">Account Balance:</p>
+    <p id="balance" class="text-3xl font-bold">€40,000</p>
+  </div>  <div class="grid grid-cols-2 gap-4 mb-6">
+    <button onclick="showTransaction('transfer')" class="bg-green-600 text-white py-3 rounded-xl">Transfer</button>
+    <button onclick="showTransaction('withdraw')" class="bg-red-600 text-white py-3 rounded-xl">Withdraw</button>
+  </div>  <div class="bg-white shadow p-4 rounded-xl mb-6">
+    <h3 class="text-lg font-bold mb-2">Recent Transactions</h3>
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="border-b">
+          <th class="text-left p-2">Date</th>
+          <th class="text-left p-2">Details</th>
+          <th class="text-left p-2">Amount</th>
+          <th class="text-left p-2">Status</th>
+        </tr>
+      </thead>
+      <tbody id="transactions">
+        <tr class="border-b">
+          <td class="p-2">2025-09-02</td>
+          <td class="p-2">Morgan Malmberg (Revolut)</td>
+          <td class="p-2 text-red-600">-10,000€</td>
+          <td class="p-2">Pending</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div><!-- TRANSACTION PAGE --><div id="transactionPage" class="hidden max-w-md mx-auto p-8 mt-10 bg-white shadow rounded-xl">
+  <h2 id="transactionTypeTitle" class="text-xl font-bold mb-4"></h2>
+  <input id="details" type="text" placeholder="Enter PayPal or Revolut details" class="w-full border p-2 rounded mb-3">
+  <input id="amount" type="number" placeholder="Enter Amount (€)" class="w-full border p-2 rounded mb-3">
+  <p class="text-xs text-red-600 mb-3">Note: A €1,100 fee will be applied to each transaction.</p>
+  <button onclick="completeTransaction()" class="w-full bg-blue-600 text-white py-2 rounded">Submit</button>
+</div><!-- COMPLETE PAGE --><div id="completePage" class="hidden max-w-md mx-auto p-8 mt-10 bg-white shadow rounded-xl text-center">
+  <h2 class="text-2xl font-bold mb-4">Transaction Complete</h2>
+  <p id="completeMsg" class="mb-4">Your transaction has been processed successfully.</p>
+  <p class="text-sm">Returning to dashboard...</p>
+</div><script>
+let balance = 40000;
+let currentType = '';
+
+function login(){
+  // simple direct login behavior
+  document.getElementById('username').value = document.getElementById('username').value || 'User';
+  document.getElementById('loginPage').classList.add('hidden');
+  document.getElementById('dashboard').classList.remove('hidden');
+  updateDateTime();
+  setInterval(updateDateTime,1000);
+  greeting();
+}
+
+function updateDateTime(){
+  document.getElementById('dateTime').innerText = new Date().toLocaleString();
+}
+
+function greeting(){
+  const hour = new Date().getHours();
+  let greet = 'Welcome';
+  if(hour<12) greet = 'Good Morning';
+  else if(hour<18) greet = 'Good Afternoon';
+  else greet = 'Good Evening';
+  document.getElementById('greeting').innerText = greet;
+}
+
+function showTransaction(type){
+  currentType = type;
+  document.getElementById('dashboard').classList.add('hidden');
+  document.getElementById('transactionPage').classList.remove('hidden');
+  document.getElementById('transactionTypeTitle').innerText = type === 'transfer' ? 'Make a Transfer' : 'Withdraw Funds';
+}
+
+function completeTransaction(){
+  const details = document.getElementById('details').value;
+  const amount = parseFloat(document.getElementById('amount').value);
+  if(!details || !amount || amount <= 0){
+    alert('Please enter valid details and amount');
+    return;
+  }
+  const fee = 1100; // updated fee
+  const total = amount + fee;
+  if(total > balance){
+    alert('Insufficient funds');
+    return;
+  }
+  balance -= total;
+  document.getElementById('balance').innerText = `€${balance.toLocaleString()}`;
+
+  const row = document.createElement('tr');
+  row.classList.add('border-b');
+  row.innerHTML = `<td class='p-2'>${new Date().toLocaleDateString()}</td>
+                   <td class='p-2'>${details}</td>
+                   <td class='p-2 text-red-600'>-${amount}€</td>
+                   <td class='p-2'>Completed</td>`;
+  document.getElementById('transactions').prepend(row);
+
+  document.getElementById('transactionPage').classList.add('hidden');
+  document.getElementById('completePage').classList.remove('hidden');
+  document.getElementById('completeMsg').innerText = `${currentType === 'transfer' ? 'Transfer' : 'Withdrawal'} of €${amount.toLocaleString()} completed. €${fee.toLocaleString()} fee applied.`;
+  setTimeout(()=>{
+    document.getElementById('completePage').classList.add('hidden');
+    document.getElementById('dashboard').classList.remove('hidden');
+  },2000);
+}
+</script></body>
+</html>
