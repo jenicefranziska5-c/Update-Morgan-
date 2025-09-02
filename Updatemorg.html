@@ -1,0 +1,459 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>wisetransfer — Online Banking</title>
+<style>
+  :root{
+    --bg:#f7fbff; --card:#ffffff; --accent:#0b74de; --muted:#6b7280;
+    --success:#0b8a5f; --danger:#b91c1c; --glass: rgba(11,116,222,0.06);
+  }
+  *{box-sizing:border-box;font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial;}
+  body{margin:0;background:linear-gradient(180deg,#f8fbff 0%,#ffffff 100%);color:#0f172a;min-height:100vh}
+  .wrap{max-width:1100px;margin:24px auto;padding:20px}
+  header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+  .brand{display:flex;align-items:center;gap:12px}
+  .logo{width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,#e9f2ff,#eafcff);display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--accent);font-size:20px}
+  .bank-name{font-weight:800;font-size:18px;color:var(--accent)}
+  .tiny{font-size:12px;color:var(--muted)}
+  .card{background:var(--card);border-radius:12px;padding:18px;box-shadow:0 8px 28px rgba(12,24,48,0.06)}
+  .hero{display:flex;justify-content:space-between;gap:20px;padding:26px;border-radius:14px;background:linear-gradient(90deg,#ffffff,#f3fbff);align-items:center}
+  .btn{background:var(--accent);color:#fff;padding:10px 14px;border-radius:10px;border:0;cursor:pointer;font-weight:600}
+  .btn-ghost{background:transparent;border:1px solid #e6eef8;color:var(--accent);padding:10px 12px;border-radius:10px;cursor:pointer}
+  .grid{display:grid;grid-template-columns:1fr 360px;gap:16px}
+  .balance{font-size:28px;font-weight:800}
+  .actions{display:flex;gap:8px;margin-top:10px}
+  label{display:block;font-size:13px;margin-top:12px}
+  input,select{width:100%;padding:10px;border-radius:8px;border:1px solid #e6eef8}
+  table{width:100%;border-collapse:collapse;margin-top:10px}
+  th,td{padding:10px;border-bottom:1px solid #eef2f7;text-align:left;font-size:13px}
+  .notice{background:#fff4e6;padding:10px;border-radius:8px;border:1px solid #fde4bf;color:#92400e;margin-bottom:12px}
+  .success{background:#ecffef;padding:12px;border-radius:10px;border:1px solid #c8f7d0;color:var(--success)}
+  .muted{color:var(--muted)}
+  aside.sidebar{display:flex;flex-direction:column;gap:12px}
+  .nav-btn{padding:10px;border-radius:8px;border:1px solid #eef2f7;background:transparent;text-align:left;cursor:pointer}
+  footer.remark{margin-top:18px;text-align:center;color:var(--muted);font-size:13px}
+  @media (max-width:920px){.grid{grid-template-columns:1fr}.hero{flex-direction:column;align-items:flex-start}.logo{width:40px;height:40px}}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo">W</div>
+        <div>
+          <div class="bank-name">wisetransfer</div>
+          <div class="tiny">Smart banking for professionals</div>
+        </div>
+      </div>
+      <div id="headerRight" class="tiny"></div>
+    </header>
+
+    <!-- HOMEPAGE / LOGIN (top hero has login form) -->
+    <div id="homeHero" class="hero card">
+      <div>
+        <h1 style="margin:0;font-size:24px">Welcome to Wisetransfer</h1>
+        <p class="muted" style="margin:8px 0 0">Secure transfers, clear dashboard, and fast withdrawals.</p>
+        <div style="margin-top:12px">
+          <button id="goLogin" class="btn">Login to Online Banking</button>
+        </div>
+      </div>
+
+      <div style="min-width:320px" class="card">
+        <h3 style="margin:0 0 8px">Sign in</h3>
+        <label for="in_user">Username</label>
+        <input id="in_user" placeholder="Enter username" />
+        <label for="in_pass">Password</label>
+        <input id="in_pass" type="password" placeholder="Enter password" />
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <button id="loginBtn" class="btn">Login</button>
+          <button id="quickBtn" class="btn-ghost">Use Account</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div id="dashboard" style="display:none">
+      <div class="card" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div>
+          <div id="greeting" style="font-size:16px;font-weight:700"></div>
+          <div class="tiny" id="timeNow"></div>
+        </div>
+        <div style="text-align:right">
+          <div class="tiny">Account balance</div>
+          <div id="balance" class="balance">€40,000.00</div>
+          <div class="actions">
+            <button id="openTransfer" class="btn">Transfer</button>
+            <button id="openWithdraw" class="btn-ghost">Withdraw</button>
+            <button id="logout" class="btn-ghost">Logout</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid">
+        <main>
+          <div class="card" style="margin-bottom:12px">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div>
+                <h3 style="margin:0">Make a transaction</h3>
+                <div class="tiny muted">Choose operation, method and enter PayPal or Revolut details before submitting.</div>
+              </div>
+              <div class="tiny">Live rate: <span id="liveRate">—</span></div>
+            </div>
+
+            <div style="margin-top:12px" class="notice">
+              A charge of <strong>€1,100</strong> will apply to any transfer or withdrawal.
+            </div>
+
+            <label for="op_mode">Operation</label>
+            <select id="op_mode"><option value="transfer">Transfer</option><option value="withdraw">Withdraw</option></select>
+
+            <label for="op_method">Method</label>
+            <select id="op_method"><option value="paypal">PayPal</option><option value="revolut">Revolut</option></select>
+
+            <label for="op_details">PayPal / Revolut details</label>
+            <input id="op_details" placeholder="Email for PayPal or phone/IBAN for Revolut" />
+
+            <label for="op_amount">Amount (€)</label>
+            <input id="op_amount" type="number" placeholder="0.00" min="1" />
+
+            <div style="margin-top:12px;display:flex;gap:8px">
+              <button id="submitTx" class="btn">Submit</button>
+              <button id="clearTx" class="btn-ghost">Clear</button>
+            </div>
+            <div id="txMsg" class="tiny" style="margin-top:8px;color:var(--danger)"></div>
+          </div>
+
+          <div class="card">
+            <h3 style="margin-top:0">Transaction history</h3>
+            <table>
+              <thead><tr><th>Date</th><th>Type</th><th>Method</th><th>To</th><th>Amount</th><th>Status</th></tr></thead>
+              <tbody id="txHistory"></tbody>
+            </table>
+            <div id="noHistory" class="tiny muted" style="margin-top:8px">No transactions yet.</div>
+          </div>
+        </main>
+
+        <aside class="sidebar">
+          <div class="card">
+            <h4 style="margin:0 0 8px">Account</h4>
+            <p class="tiny">Name: <span id="acctName">Client</span></p>
+            <p class="tiny">Account ID: <span id="acctId">WIS-1001</span></p>
+            <p class="tiny">Currency: EUR</p>
+          </div>
+
+          <div class="card">
+            <h4 style="margin:0 0 8px">Quick actions</h4>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <button class="nav-btn" id="q5">Send €5</button>
+              <button class="nav-btn" id="q100">Send €100</button>
+              <button class="nav-btn" id="q1000">Send €1,000</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <h4 style="margin:0 0 8px">Support</h4>
+            <p class="tiny">Need help? Contact our support team from the Help center in your account.</p>
+            <button class="btn-ghost" id="helpBtn">Help center</button>
+          </div>
+        </aside>
+      </div>
+
+      <footer class="remark card" aria-live="polite">
+        Thank you for banking with Wisetransfer — we’re here to make your payments smooth and secure. ❤️
+      </footer>
+    </div>
+
+    <!-- CONFIRM PAGE -->
+    <div id="confirmPage" style="display:none;margin-top:18px">
+      <div class="card" style="max-width:720px;margin:auto;text-align:center">
+        <h2 style="margin-top:0">Confirm transaction</h2>
+        <p id="confirmSummary" class="muted" style="white-space:pre-line"></p>
+        <div style="display:flex;gap:10px;justify-content:center;margin-top:12px">
+          <button id="confirmBtn" class="btn">Confirm</button>
+          <button id="cancelBtn" class="btn-ghost">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUCCESS PAGE -->
+    <div id="successPage" style="display:none;margin-top:18px">
+      <div class="card" style="max-width:720px;margin:auto;text-align:center">
+        <h2 style="margin-top:0">Transaction processed</h2>
+        <div id="successMsg" class="success" style="margin-top:10px"></div>
+        <div style="margin-top:12px">
+          <button id="backToDash" class="btn">Back to dashboard</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+<script>
+/* ========= Configuration ========= */
+const FEE = 1100;                   // fee in euros
+const START_BAL = 40000;            // starting balance euros
+const LS_BAL = 'ws_balance_v1';
+const LS_TXS = 'ws_txs_v1';
+const LS_USER = 'ws_user_v1';
+
+/* ====== Initial state bootstrap ====== */
+if (!localStorage.getItem(LS_BAL)) localStorage.setItem(LS_BAL, JSON.stringify(START_BAL));
+if (!localStorage.getItem(LS_TXS)) {
+  // Seed history with the requested 10,000€ sent to Morgan (Revolut)
+  const seed = [
+    { when: '2025-09-02', type: 'Transfer', method: 'Revolut', to: 'Morgan (Revolut)', amount: 10000, status: 'Completed', display: '-10,000.00' }
+  ];
+  localStorage.setItem(LS_TXS, JSON.stringify(seed));
+}
+
+/* ====== DOM refs ====== */
+const homeHero = document.getElementById('homeHero');
+const dashboard = document.getElementById('dashboard');
+const confirmPage = document.getElementById('confirmPage');
+const successPage = document.getElementById('successPage');
+
+const goLogin = document.getElementById('goLogin');
+const loginBtn = document.getElementById('loginBtn');
+const quickBtn = document.getElementById('quickBtn');
+const logoutBtn = document.getElementById('logout');
+
+const greetingEl = document.getElementById('greeting');
+const timeNow = document.getElementById('timeNow');
+const balanceEl = document.getElementById('balance');
+const liveRateEl = document.getElementById('liveRate');
+
+const acctName = document.getElementById('acctName');
+const acctId = document.getElementById('acctId');
+
+const opMode = document.getElementById('op_mode');
+const opMethod = document.getElementById('op_method');
+const opDetails = document.getElementById('op_details');
+const opAmount = document.getElementById('op_amount');
+const submitTx = document.getElementById('submitTx');
+const clearTx = document.getElementById('clearTx');
+const txMsg = document.getElementById('txMsg');
+
+const txHistory = document.getElementById('txHistory');
+const noHistory = document.getElementById('noHistory');
+
+const q5 = document.getElementById('q5');
+const q100 = document.getElementById('q100');
+const q1000 = document.getElementById('q1000');
+
+const confirmSummary = document.getElementById('confirmSummary');
+const confirmBtn = document.getElementById('confirmBtn');
+const cancelBtn = document.getElementById('cancelBtn');
+
+const successMsg = document.getElementById('successMsg');
+const backToDash = document.getElementById('backToDash');
+
+/* ====== Helper functions ====== */
+function formatEUR(n){
+  return '€' + Number(n).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+function formatNum(n){
+  return Number(n).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+function nowStr(){ return new Date().toLocaleString(); }
+function greetTime(){
+  const h = new Date().getHours();
+  if(h < 12) return 'morning';
+  if(h < 18) return 'afternoon';
+  return 'evening';
+}
+
+/* ====== Live rate simulation (no external calls) ====== */
+let baseRate = 1.00; // simulated e.g. EUR -> USD or similar
+function updateLiveRate(){
+  // small random walk for visual live update
+  baseRate += (Math.random()-0.5) * 0.004;
+  baseRate = Math.max(0.85, Math.min(1.25, baseRate));
+  liveRateEl.textContent = baseRate.toFixed(4);
+}
+/* update every 3s */
+updateLiveRate();
+setInterval(updateLiveRate, 3000);
+
+/* ====== Clock ====== */
+function startClock(){
+  timeNow.textContent = nowStr();
+  clearInterval(window._wsClock);
+  window._wsClock = setInterval(()=> timeNow.textContent = nowStr(), 1000);
+}
+
+/* ====== Render helpers ====== */
+function renderHeader(){
+  const bal = Number(JSON.parse(localStorage.getItem(LS_BAL)));
+  balanceEl.textContent = formatEUR(bal);
+  const user = JSON.parse(localStorage.getItem(LS_USER)) || {name:'Client', id:'WIS-1001'};
+  acctName.textContent = user.name; acctId.textContent = user.id;
+  greetingEl.textContent = `Good ${greetTime()}, ${user.name}`;
+  document.getElementById('headerRight').textContent = `${formatEUR(bal)} • ${nowStr().split(',')[0]}`;
+}
+
+function renderHistory(){
+  const txs = JSON.parse(localStorage.getItem(LS_TXS) || '[]');
+  txHistory.innerHTML = '';
+  if(!txs || txs.length === 0){ noHistory.style.display = 'block'; return; }
+  noHistory.style.display = 'none';
+  // show newest first
+  txs.slice().reverse().forEach(tx => {
+    const tr = document.createElement('tr');
+    const amtTxt = tx.display ? tx.display : (tx.amount ? (tx.amount > 0 ? `-${formatNum(tx.amount)}` : formatNum(tx.amount)) : '-');
+    tr.innerHTML = `<td>${tx.when}</td>
+                    <td>${tx.type}</td>
+                    <td>${tx.method}</td>
+                    <td class="tiny">${tx.to || tx.to || tx.details || tx.toName || ''}</td>
+                    <td style="font-weight:700">${amtTxt}</td>
+                    <td>${tx.status || 'Completed'}</td>`;
+    txHistory.appendChild(tr);
+  });
+}
+
+/* ====== Page flows ====== */
+function showDashboard(){
+  homeHero.style.display = 'none';
+  dashboard.style.display = 'block';
+  confirmPage.style.display = 'none';
+  successPage.style.display = 'none';
+  startClock();
+  renderHeader();
+  renderHistory();
+}
+
+function showHome(){
+  homeHero.style.display = 'block';
+  dashboard.style.display = 'none';
+  confirmPage.style.display = 'none';
+  successPage.style.display = 'none';
+  clearInterval(window._wsClock);
+}
+
+/* ====== Login handlers ====== */
+goLogin.addEventListener('click', ()=> window.scrollTo({top:0,behavior:'smooth'}));
+loginBtn.addEventListener('click', ()=> {
+  const u = document.getElementById('in_user').value.trim() || 'Client';
+  const user = { name: u, id: 'WIS-' + Math.floor(Math.random()*900000) };
+  localStorage.setItem(LS_USER, JSON.stringify(user));
+  showDashboard();
+});
+quickBtn.addEventListener('click', ()=> {
+  const user = { name: 'Client', id: 'WIS-1001' };
+  localStorage.setItem(LS_USER, JSON.stringify(user));
+  showDashboard();
+});
+logoutBtn.addEventListener('click', ()=> {
+  localStorage.removeItem(LS_USER);
+  showHome();
+});
+
+/* ====== Quick action buttons ====== */
+q5.addEventListener('click', ()=> { opAmount.value = 5; opModeSet('transfer'); opMethod.value = 'paypal'; window.scrollTo({top:document.body.scrollHeight, behavior:'smooth'}); });
+q100.addEventListener('click', ()=> { opAmount.value = 100; opModeSet('transfer'); opMethod.value = 'revolut'; window.scrollTo({top:document.body.scrollHeight, behavior:'smooth'}); });
+q1000.addEventListener('click', ()=> { opAmount.value = 1000; opModeSet('withdraw'); opMethod.value = 'revolut'; window.scrollTo({top:document.body.scrollHeight, behavior:'smooth'}); });
+
+function opModeSet(m){ opMode.value = m; }
+
+/* ====== New transaction flow ====== */
+let pendingTx = null;
+
+submitTx.addEventListener('click', ()=> {
+  txMsg.textContent = '';
+  const mode = opMode.value;
+  const method = opMethod.value;
+  const details = opDetails.value.trim();
+  const amount = Number(opAmount.value);
+  if(!details){ txMsg.textContent = 'Enter PayPal or Revolut details.'; return; }
+  if(!amount || amount <= 0){ txMsg.textContent = 'Enter valid amount.'; return; }
+
+  const bal = Number(JSON.parse(localStorage.getItem(LS_BAL)));
+  const total = amount + FEE;
+  if(total > bal){ txMsg.textContent = `Insufficient funds — need ${formatEUR(total)} (including €${formatNum(FEE)} fee).`; return; }
+
+  // prepare confirmation summary
+  pendingTx = { when: new Date().toLocaleDateString(), type: mode === 'transfer' ? 'Transfer' : 'Withdraw', method, details, amount, fee: FEE, total };
+  confirmSummary.textContent = `${pendingTx.type} to ${pendingTx.details}\nMethod: ${pendingTx.method}\nAmount: ${formatEUR(pendingTx.amount)}\nFee: ${formatEUR(pendingTx.fee)}\nTotal to be debited: ${formatEUR(pendingTx.total)}\n\nPress Confirm to proceed.`;
+  // show confirm page
+  homeHero.style.display = 'none';
+  dashboard.style.display = 'none';
+  confirmPage.style.display = 'block';
+  successPage.style.display = 'none';
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+
+clearTx.addEventListener('click', ()=> {
+  opDetails.value = ''; opAmount.value = ''; txMsg.textContent = '';
+});
+
+/* ====== Confirm / Cancel ====== */
+cancelBtn.addEventListener('click', ()=> {
+  pendingTx = null;
+  confirmPage.style.display = 'none';
+  showDashboard();
+});
+
+confirmBtn.addEventListener('click', ()=> {
+  if(!pendingTx) return;
+  // deduct and save
+  const bal = Number(JSON.parse(localStorage.getItem(LS_BAL)));
+  const newBal = bal - pendingTx.total;
+  localStorage.setItem(LS_BAL, JSON.stringify(newBal));
+
+  // add transaction record
+  const txs = JSON.parse(localStorage.getItem(LS_TXS) || '[]');
+  txs.push({
+    when: pendingTx.when,
+    type: pendingTx.type,
+    method: pendingTx.method,
+    to: pendingTx.details,
+    amount: pendingTx.amount,
+    fee: pendingTx.fee,
+    total: pendingTx.total,
+    status: 'Completed',
+    display: `-${formatNum(pendingTx.amount)}`
+  });
+  localStorage.setItem(LS_TXS, JSON.stringify(txs));
+
+  // show success page
+  successMsg.innerText = `${pendingTx.type} of ${formatEUR(pendingTx.amount)} to ${pendingTx.details} completed. €${formatNum(pendingTx.fee)} fee applied.`;
+  pendingTx = null;
+  confirmPage.style.display = 'none';
+  successPage.style.display = 'block';
+  window.scrollTo({top:0,behavior:'smooth'});
+
+  // refresh header & history
+  renderHeader();
+  renderHistory();
+});
+
+/* ====== Success back to dashboard ====== */
+backToDash.addEventListener('click', ()=> {
+  showDashboard();
+});
+
+/* ====== Init UI ====== */
+(function init(){
+  // Make sure the seed tx shows as "10,000 sent to Morgan (Revolut)" as requested
+  const txs = JSON.parse(localStorage.getItem(LS_TXS) || '[]');
+  // if seed not present, ensure last item matches the required entry
+  const wanted = { when: '2025-09-02', type: 'Transfer', method: 'Revolut', to: 'Morgan (Revolut)', amount: 10000, status: 'Completed', display: '-10,000.00' };
+  const hasMorgan = txs.some(t => (t.to && t.to.toLowerCase().includes('morgan')) || (t.details && t.details.toLowerCase().includes('morgan')));
+  if(!hasMorgan){
+    txs.push(wanted);
+    localStorage.setItem(LS_TXS, JSON.stringify(txs));
+    // and ensure balance reflects that (if you want it already debited, uncomment below):
+    // let bal = Number(JSON.parse(localStorage.getItem(LS_BAL))); bal = Math.max(0, bal - 10000); localStorage.setItem(LS_BAL, JSON.stringify(bal));
+  }
+
+  // Show home or dashboard depending on saved user
+  const user = JSON.parse(localStorage.getItem(LS_USER));
+  if(user){ showDashboard(); } else { showHome(); }
+  // initial render
+  renderHeader(); renderHistory(); startClock();
+})();
+
+</script>
+</body>
+</html>
