@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matt Rife Fans - Official Community Support</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            color: #5d3fd3; /* Purple theme */
+            text-align: center;
+        }
+        .header {
+            border-bottom: 3px solid #ccc;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+        .disclaimer, .footer-disclaimer {
+            background-color: #ffe5e5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border: 1px solid #ff9999;
+            color: #cc0000;
+            font-size: 0.9em;
+        }
+        .live-time {
+            text-align: center;
+            font-size: 1.1em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #007bff;
+        }
+        .engagement-options button, .payment-options button {
+            background-color: #5d3fd3;
+            color: white;
+            padding: 12px 20px;
+            margin: 8px 10px 8px 0;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s;
+        }
+        .engagement-options button:hover, .payment-options button:hover {
+            background-color: #4b32a3;
+        }
+        .brand-registration {
+            margin-top: 30px;
+            padding: 20px;
+            border: 2px dashed #5d3fd3;
+            border-radius: 8px;
+        }
+        #brandInputArea, #loadingIndicator, #brandHistory {
+            margin-top: 15px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            display: none; /* Hidden by default */
+        }
+        #brandInputArea input[type="text"] {
+            padding: 10px;
+            width: calc(100% - 22px);
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .loading-bar {
+            height: 20px;
+            background-color: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .loading-progress {
+            height: 100%;
+            width: 0; /* Starts at 0 */
+            background-color: #4CAF50;
+            text-align: center;
+            line-height: 20px;
+            color: white;
+            font-weight: bold;
+            transition: width 2s;
+        }
+        .history-item {
+            padding: 5px 0;
+            border-bottom: 1px dotted #eee;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Welcome to the Matt Rife Fans Support Hub</h1>
+            <p style="text-align: center; font-style: italic;">Where comedy meets community promotion.</p>
+            <div class="live-time" id="liveTime"></div>
+        </div>
+
+        <div class="disclaimer">
+            **Disclaimer:** This site is operated by a fan community to **support and boost visibility** for brands and pages within the Matt Rife fan base. This is **not an official Matt Rife platform.**
+        </div>
+
+        ---
+
+        <div class="brand-registration">
+            <h2>Brand Promotion Registration</h2>
+            <button onclick="showBrandInput()">Register Brand Name First</button>
+            
+            <div id="brandInputArea">
+                <input type="text" id="brandName" placeholder="Enter your Brand/Page Name">
+                <button onclick="saveBrandName()">Save Brand</button>
+            </div>
+
+            <div id="loadingIndicator">
+                <p>Brand Name Saved. Preparing Ad Slot...</p>
+                <div class="loading-bar">
+                    <div class="loading-progress" id="progressBar">0%</div>
+                </div>
+            </div>
+
+            <div id="brandHistory">
+                <h3>Previously Paid Ad History (Brand Accounts)</h3>
+                <div class="history-item">1. @EliteSnacksCo - Featured (October 2025)</div>
+                <div class="history-item">2. @GlobalGiggles - Story Promotion (September 2025)</div>
+                <div class="history-item">3. @TechTrendsNow - Post Mention (August 2025)</div>
+            </div>
+        </div>
+
+        ---
+
+        <h2>🎯 Engagement Visibility Options</h2>
+        <p>Select your desired level of community engagement for promotional content:</p>
+        <div class="engagement-options">
+            <button onclick="showContact('50,000')">50,000 Engagements</button>
+            <button onclick="showContact('500,000')">500,000 Engagements</button>
+            <button onclick="showContact('1 Million')">1 Million Engagements</button>
+            <button onclick="showContact('More')">More...</button>
+        </div>
+        <p id="contactMessage" style="color: #5d3fd3; font-weight: bold; margin-top: 15px; display: none;">Contact: **wisetransfer688@gmail.com**</p>
+
+        ---
+
+        <h2>💳 Payment Options</h2>
+        <p>Click your preferred method to proceed with your booking:</p>
+        <div class="payment-options">
+            <button onclick="showPaymentContact('CashApp')">CashApp</button>
+            <button onclick="showPaymentContact('PayPal')">PayPal</button>
+        </div>
+
+        ---
+
+        <div class="footer-disclaimer">
+            <p style="text-align: center; font-weight: bold;">**Fan Page Growth Disclaimer:** We project successful fan pages will achieve approximately **1 million** engagements per month through our targeted promotion and community leverage. ©2025</p>
+        </div>
+    </div>
+
+    <script>
+        // Function to update the live time
+        function updateLiveTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+            const dateString = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            document.getElementById('liveTime').textContent = `Live Time: ${dateString} - ${timeString}`;
+        }
+        setInterval(updateLiveTime, 1000); // Update every second
+        updateLiveTime(); // Initial call
+
+        // Show brand input area
+        function showBrandInput() {
+            document.getElementById('brandInputArea').style.display = 'block';
+            document.getElementById('brandHistory').style.display = 'block';
+        }
+
+        // Save brand name and show loading indicator
+        function saveBrandName() {
+            const brandName = document.getElementById('brandName').value.trim();
+            if (brandName) {
+                // Simulate saving the name
+                alert(`Brand Name "${brandName}" saved temporarily!`);
+                
+                // Show 30% loading indicator
+                const loadingIndicator = document.getElementById('loadingIndicator');
+                const progressBar = document.getElementById('progressBar');
+                
+                loadingIndicator.style.display = 'block';
+                progressBar.style.width = '30%';
+                progressBar.textContent = '30%';
+                
+                // Show history after save
+                document.getElementById('brandHistory').style.display = 'block';
+            } else {
+                alert('Please enter a valid Brand/Page Name.');
+            }
+        }
+
+        // Show contact email for engagement options
+        function showContact(level) {
+            document.getElementById('contactMessage').style.display = 'block';
+            document.getElementById('contactMessage').textContent = `You selected ${level} Engagements. Contact: wisetransfer688@gmail.com`;
+        }
+
+        // Show contact email for payment options
+        function showPaymentContact(method) {
+            alert(`Please complete payment by contacting: wisetransfer688@gmail.com. Mention preferred method: ${method}`);
+        }
+    </script>
+</body>
+</html>
