@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta-name="viewport" content="width=device-width,initial-scale=1" />
+  <title>WiseTransfer — Tesla Stock Info</title>
+  <style>
+    body{
+      margin:0;
+      background:#0d1626;
+      font-family:Inter, sans-serif;
+      color:#e5eef7;
+      line-height:1.45;
+    }
+    .container{max-width:900px;margin:40px auto;padding:20px;}
+    header{text-align:center;margin-bottom:30px;}
+    h1{margin:0;font-size:28px;font-weight:800;color:#44d8b4;}
+    .card{
+      background:#0f1e32;
+      padding:22px;
+      border-radius:12px;
+      box-shadow:0 3px 12px rgba(0,0,0,0.4);
+    }
+    label{display:block;margin-bottom:6px;font-weight:600;}
+    select,input{
+      width:100%;
+      padding:12px;
+      margin-bottom:14px;
+      border-radius:8px;
+      border:1px solid rgba(255,255,255,0.08);
+      background:#091424;
+      color:#e5eef7;
+    }
+    button{
+      padding:12px 20px;
+      border:none;
+      border-radius:10px;
+      background:#44d8b4;
+      color:#06121e;
+      font-weight:700;
+      cursor:pointer;
+      margin-top:4px;
+    }
+    .contact-box{
+      margin-top:18px;
+      background:#0c1a2b;
+      padding:16px;
+      border-radius:10px;
+      color:#bac7d6;
+      line-height:1.5;
+    }
+    footer{
+      text-align:center;
+      margin-top:35px;
+      color:#7f8fa4;
+      font-size:13px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <h1>WiseTransfer — Tesla Stock Section</h1>
+      <p>Select Tesla option and reach out for more information.</p>
+    </header>
+
+    <section class="card">
+      <h2 style="margin-top:0;font-size:22px;color:#44d8b4;">Tesla Stock Information</h2>
+      <p style="color:#bac7d6;">
+        Choose your stock option below.  
+        For additional information or clarification, contact our company email.
+      </p>
+
+      <label>Select Stock</label>
+      <select>
+        <option selected>Tesla (TSLA)</option>
+      </select>
+
+      <label>Amount (USD)</label>
+      <input type="number" placeholder="Enter amount (optional)" />
+
+      <button type="button">Submit Selection</button>
+
+      <div class="contact-box">
+        <strong>For More Information:</strong><br>
+        <span style="color:#44d8b4;font-weight:700;">wisetransfer688@gmail.com</span><br>
+        <span>Contact this email for details.</span>
+      </div>
+    </section>
+
+    <footer>
+      ©2025 WiseTransfer. All Rights Reserved.
+    </footer>
+  </div>
+</body>
+</html>
