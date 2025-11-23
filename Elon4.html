@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Global Stock Exchange Dashboard</title>
+<style>
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; margin: 0; text-align: center; color: #333; }
+    header { background: #1a252f; color: #ecf0f1; padding: 25px; }
+    footer { background: #1a252f; color: #bdc3c7; padding: 15px; position: fixed; bottom: 0; width: 100%; font-size: 14px; }
+    .container { max-width: 950px; margin: 40px auto; background: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+    
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th { background: #ecf0f1; color: #2c3e50; padding: 15px; text-align: left; }
+    td { padding: 15px; border-bottom: 1px solid #ddd; text-align: left; }
+    
+    .btn-get { background: #2ecc71; color: white; padding: 8px 15px; border: none; cursor: pointer; border-radius: 4px; font-weight: bold; margin-right: 5px; }
+    .btn-sell { background: #e74c3c; color: white; padding: 8px 15px; border: none; cursor: pointer; border-radius: 4px; font-weight: bold; }
+    .btn-get:hover { background: #27ae60; }
+    .btn-sell:hover { background: #c0392b; }
+    
+    .timer-display { color: #f1c40f; font-weight: bold; font-size: 1.1em; }
+    h2 { color: #2c3e50; }
+</style>
+</head>
+<body>
+
+<header>
+    <h1>Welcome to the Global Stock Exchange</h1>
+    <p>Next Market Sync: <span id="timer" class="timer-display">10</span> seconds</p>
+</header>
+
+<div class="container">
+    <h2>Live Market Board (USD)</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Stock</th>
+                <th>Ticker</th>
+                <th>Price (USD)</th>
+                <th>Exchange Rate (1 USD)</th>
+                <th>Trade Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Tesla</td>
+                <td>TSLA</td>
+                <td>$218.45</td>
+                <td>0.0045 TSLA</td>
+                <td>
+                    <button class="btn-get" onclick="trade('Buy', 'Tesla')">Get</button>
+                    <button class="btn-sell" onclick="trade('Sell', 'Tesla')">Sell</button>
+                </td>
+            </tr>
+            <tr>
+                <td>SpaceX</td>
+                <td>SPCX</td>
+                <td>$95.00</td>
+                <td>0.0105 SPCX</td>
+                <td>
+                    <button class="btn-get" onclick="trade('Buy', 'SpaceX')">Get</button>
+                    <button class="btn-sell" onclick="trade('Sell', 'SpaceX')">Sell</button>
+                </td>
+            </tr>
+            <tr>
+                <td>Apple</td>
+                <td>AAPL</td>
+                <td>$189.62</td>
+                <td>0.0052 AAPL</td>
+                <td>
+                    <button class="btn-get" onclick="trade('Buy', 'Apple')">Get</button>
+                    <button class="btn-sell" onclick="trade('Sell', 'Apple')">Sell</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<footer>
+    <p>Thank you for trading with us. Goodbye! &copy; 2025</p>
+</footer>
+
+<script>
+    // Countdown Timer
+    let time = 10;
+    const timerEl = document.getElementById('timer');
+    setInterval(() => {
+        time--;
+        if (time < 0) time = 10;
+        timerEl.innerText = time;
+    }, 1000);
+
+    // Trade Function
+    function trade(action, stock) {
+        // PLACEHOLDER EMAIL - Edit below line manually
+        const contactEmail = "contact@example.com"; 
+        
+        alert(`You have selected to ${action} ${stock}.\n\nTo finalize this transaction, please contact support:\n${contactEmail}`);
+    }
+</script>
+
+</body>
+</html>
