@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Demo Stock Exchange — Tesla Investment</title>
+  <style>
+    :root{
+      --bg:#0f1724; --card:#0b1220; --accent:#00b894; --muted:#98a0b3; --glass: rgba(255,255,255,0.03);
+      --danger:#ff6b6b;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:linear-gradient(180deg,#071028 0%, #071827 100%);color:#e6eef8;line-height:1.35}
+    .container{max-width:980px;margin:28px auto;padding:20px}
+    header{padding:18px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));box-shadow:0 6px 20px rgba(2,6,23,0.6)}
+    h1{margin:0;font-size:20px}
+    .welcome{font-size:16px;color:var(--accent);margin-top:8px}
+    .grid{display:grid;grid-template-columns:1fr 360px;gap:18px;margin-top:18px}
+    .card{background:var(--card);padding:16px;border-radius:12px;box-shadow:0 6px 18px rgba(2,6,23,0.6)}
+    .muted{color:var(--muted);font-size:13px}
+    label{display:block;margin-bottom:6px;font-weight:600;font-size:14px}
+    select,input[type=number]{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:var(--glass);color:inherit}
+    button{cursor:pointer;padding:10px 14px;border-radius:10px;border:none;background:var(--accent);color:#002;font-weight:700}
+    .danger{background:var(--danger);color:#250000}
+    .small{font-size:13px}
+    .footer{margin-top:18px;padding:12px;text-align:center;color:var(--muted);font-size:13px}
+    .row{display:flex;gap:12px;align-items:center}
+    .stat{display:flex;flex-direction:column;padding:10px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));flex:1}
+    .price{font-size:20px;font-weight:800}
+    .up{color:#00ffad}
+    .down{color:#ff7b7b}
+    .note{background:#071a2a;padding:10px;border-radius:8px;color:var(--muted);font-size:13px}
+    .contact-box{background:rgba(255,255,255,0.02);padding:12px;border-radius:8px;color:var(--muted)}
+    .hidden{display:none}
+    footer.site-footer{margin-top:26px;text-align:center;color:var(--muted);font-size:13px}
+    @media (max-width:880px){
+      .grid{grid-template-columns:1fr; }
+      .card{padding:12px}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Welcome — Demo Stock Exchange</h1>
+      <div class="welcome">Quick test dashboard — practice flows only. Not for real investments.</div>
+    </header>
+
+    <main class="grid" aria-live="polite">
+      <!-- left: main dashboard -->
+      <section class="card" aria-label="Main dashboard">
+        <div class="row" style="justify-content:space-between;align-items:flex-start">
+          <div>
+            <div class="muted small">Dashboard update</div>
+            <div id="lastUpdated" style="font-weight:700;margin-top:4px">Updating…</div>
+          </div>
+          <div style="text-align:right">
+            <div class="muted small">Simulated Tesla price</div>
+            <div id="teslaPrice" class="price up">$---.--</div>
+          </div>
+        </div>
+
+        <hr style="margin:12px 0;border:none;border-top:1px solid rgba(255,255,255,0.03)">
+
+        <form id="investForm" onsubmit="return false;" autocomplete="off" novalidate>
+          <label for="stockSelect">Choose stock</label>
+          <select id="stockSelect" aria-label="Choose stock">
+            <option value="TSLA" selected>Tesla (TSLA)</option>
+            <!-- demo only: you can add more -->
+          </select>
+
+          <div style="display:flex;gap:10px;margin-top:12px">
+            <div style="flex:1">
+              <label for="amount">Investment amount (USD)</label>
+              <input id="amount" type="number" min="5000" step="1" placeholder="Enter amount (min $5,000)" aria-describedby="amountHelp" />
+              <div id="amountHelp" class="muted small" style="margin-top:6px">Minimum enforced: <strong>$5,000</strong> (demo validation).</div>
+            </div>
+
+            <div style="width:180px">
+              <label>&nbsp;</label>
+              <button id="previewBtn" type="button">Preview</button>
+            </div>
+          </div>
+
+          <div id="previewArea" style="margin-top:12px" class="hidden">
+            <div class="note"><strong>Preview</strong>: You selected <span id="previewStock">TSLA</span> for <strong id="previewAmount">$0</strong>.</div>
+            <div style="margin-top:10px;display:flex;gap:8px">
+              <button id="showContact" type="button">Show contact / next steps</button>
+              <button id="resetBtn" type="button" class="danger">Reset</button>
+            </div>
+          </div>
+        </form>
+
+        <div id="contactReveal" class="contact-box hidden" aria-live="polite" style="margin-top:14px">
+          <!-- IMPORTANT: For minors and demo safety we do NOT include any real payment instructions -->
+          <strong>Important — Demo only</strong>
+          <p class="muted" style="margin-top:8px">
+            This demo does NOT process payments. If you want to invest for real, you must involve a parent/guardian or an authorized adult who can open a brokerage account and complete regulated transactions. Do NOT send money based on demos or private messages.
+          </p>
+          <ul class="muted small">
+            <li>Min investment enforced (demo): <strong>$5,000</strong></li>
+            <li>If you are under 18, talk to a parent/guardian or a licensed financial professional.</li>
+            <li>To practice, use simulated/demo accounts from regulated brokers (they provide sandbox/demo trading).</li>
+          </ul>
+        </div>
+
+        <div style="margin-top:14px" class="muted small">
+          Tip: This dashboard simulates price updates and validates amounts in the browser. It is not financial advice.
+        </div>
+      </section>
+
+      <!-- right: sidebar -->
+      <aside class="card" aria-label="Sidebar">
+        <div style="margin-bottom:12px">
+          <div class="muted small">Quick stats</div>
+          <div class="row" style="margin-top:8px">
+            <div class="stat">
+              <div class="muted small">Today change</div>
+              <div id="todayChange" class="muted">—</div>
+            </div>
+            <div class="stat">
+              <div class="muted small">Simulated volume</div>
+              <div id="simVol" class="muted">—</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:12px" class="muted small">
+          Live update timer (local)
+        </div>
+        <div style="margin-top:8px;font-weight:700" id="liveTimer">--:--:--</div>
+
+        <hr style="margin:12px 0;border:none;border-top:1px solid rgba(255,255,255,0.03)">
+
+        <div class="muted small">Notes</div>
+        <div style="margin-top:8px" class="muted">
+          - Demo data updates every 3 seconds.<br>
+          - No payments are accepted here. This is a frontend demo only.
+        </div>
+      </aside>
+    </main>
+
+    <footer class="site-footer">
+      Thank you for trying the demo. Goodbye — trade safe. ©2025
+    </footer>
+
+    <div class="footer">
+      Built as a demo UI — does not accept money or perform trades.
+    </div>
+  </div>
+
+  <script>
+    // -------------------------
+    // Demo logic (no payments)
+    // -------------------------
+    const priceEl = document.getElementById('teslaPrice');
+    const lastUpdatedEl = document.getElementById('lastUpdated');
+    const liveTimerEl = document.getElementById('liveTimer');
+    const todayChangeEl = document.getElementById('todayChange');
+    const simVolEl = document.getElementById('simVol');
+
+    // Start simulated price and stats
+    let simulatedPrice = 230 + Math.random() * 70; // starting point
+    let prevPrice = simulatedPrice;
+    function formatPrice(p){ return '$' + p.toFixed(2); }
+
+    function updateSimulatedData(){
+      // small random walk
+      const drift = (Math.random() - 0.48) * 1.2;
+      prevPrice = simulatedPrice;
+      simulatedPrice = Math.max(1, simulatedPrice + drift);
+      priceEl.textContent = formatPrice(simulatedPrice);
+      priceEl.className = simulatedPrice >= prevPrice ? 'price up' : 'price down';
+
+      const change = ((simulatedPrice - 230) / 230) * 100;
+      todayChangeEl.textContent = change.toFixed(2) + '%';
+      simVolEl.textContent = Math.floor(100000 + Math.random() * 900000).toLocaleString();
+
+      const now = new Date();
+      lastUpdatedEl.textContent = now.toLocaleString();
+    }
+
+    // live timer
+    function tickTimer(){
+      const n = new Date();
+      liveTimerEl.textContent = n.toLocaleTimeString();
+    }
+
+    // update every 3 seconds for demo (price); timer every 1s
+    updateSimulatedData();
+    setInterval(updateSimulatedData, 3000);
+    tickTimer();
+    setInterval(tickTimer, 1000);
+
+    // -------------------------
+    // Form behavior & validation
+    // -------------------------
+    const previewBtn = document.getElementById('previewBtn');
+    const amountInput = document.getElementById('amount');
+    const previewArea = document.getElementById('previewArea');
+    const previewStock = document.getElementById('previewStock');
+    const previewAmount = document.getElementById('previewAmount');
+    const showContactBtn = document.getElementById('showContact');
+    const contactReveal = document.getElementById('contactReveal');
+    const resetBtn = document.getElementById('resetBtn');
+
+    previewBtn.addEventListener('click', () => {
+      const stock = document.getElementById('stockSelect').value || 'TSLA';
+      const amt = Number(amountInput.value);
+      if (!amt || isNaN(amt)) {
+        alert('Enter an amount (minimum $5,000).');
+        amountInput.focus();
+        return;
+      }
+      if (amt < 5000) {
+        alert('Minimum amount is $5,000. This demo enforces that to protect new users.');
+        amountInput.focus();
+        return;
+      }
+      previewStock.textContent = stock;
+      previewAmount.textContent = '$' + amt.toLocaleString();
+      previewArea.classList.remove('hidden');
+      contactReveal.classList.add('hidden');
+      // subtle focus
+      showContactBtn.focus();
+    });
+
+    showContactBtn.addEventListener('click', () => {
+      // IMPORTANT SAFETY: do not provide payment or contact to bypass adult oversight.
+      contactReveal.classList.remove('hidden');
+      contactReveal.scrollIntoView({behavior:'smooth',block:'center'});
+    });
+
+    resetBtn.addEventListener('click', () => {
+      amountInput.value = '';
+      previewArea.classList.add('hidden');
+      contactReveal.classList.add('hidden');
+    });
+
+    // keyboard accessibility: enforce min when user types and leaves field
+    amountInput.addEventListener('blur', ()=>{
+      const v = Number(amountInput.value);
+      if (v && !isNaN(v) && v < 5000) {
+        // do not auto-correct; warn user
+        amountInput.setCustomValidity('Minimum amount is $5,000.');
+      } else {
+        amountInput.setCustomValidity('');
+      }
+    });
+  </script>
+</body>
+</html>
